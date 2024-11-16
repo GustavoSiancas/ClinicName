@@ -3,6 +3,7 @@ package com.example.demo.controller.User;
 import com.example.demo.controller.User.Request.LoginRequest;
 import com.example.demo.controller.User.Request.RegisterRequest;
 import com.example.demo.controller.User.Response.LoginResponse;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<UserEntity> register(@RequestBody RegisterRequest registerRequest) {
         return  ResponseEntity.ok(userService.register(registerRequest));
     }
 }
