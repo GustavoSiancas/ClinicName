@@ -1,6 +1,7 @@
 package com.example.demo.controller.User;
 
 import com.example.demo.controller.User.Request.LoginRequest;
+import com.example.demo.controller.User.Request.RegisterRequest;
 import com.example.demo.controller.User.Response.LoginResponse;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +21,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.login(loginRequest));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<LoginResponse> register(@RequestBody RegisterRequest registerRequest) {
+        return  ResponseEntity.ok(userService.register(registerRequest));
     }
 }
