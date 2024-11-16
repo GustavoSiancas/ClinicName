@@ -18,8 +18,8 @@ public class DemoApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")  // Permite el acceso a todas las rutas
-						.allowedOrigins("*")  // Permite todos los orígenes
+				registry.addMapping("/**")
+						.allowedOriginPatterns("https://*")  // specify origins
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
