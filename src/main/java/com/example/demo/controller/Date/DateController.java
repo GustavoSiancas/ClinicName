@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/date")
 public class DateController {
     @Autowired
