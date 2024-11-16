@@ -54,5 +54,16 @@ public class DateController {
         return ResponseEntity.ok(dateService.updateCompleteDate(id,completeDateRequest));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDate(@PathVariable Long id) {
+        boolean isDeleted = dateService.deleteDateById(id);
+
+        if (isDeleted) {
+            return ResponseEntity.noContent().build(); // HTTP 204: No Content
+        } else {
+            return ResponseEntity.notFound().build(); // HTTP 404: Not Found
+        }
+    }
+
 
 }

@@ -154,4 +154,12 @@ public class DateService {
         return money;
     }
 
+    public boolean deleteDateById(Long id) {
+        if (dateRepository.existsById(id)) {
+            dateRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
 }
