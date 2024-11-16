@@ -18,12 +18,11 @@ public class DemoApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/")
-						.allowedOrigins("http://localhost:4200")
+				registry.addMapping("/**")  // Permite el acceso a todas las rutas
+						.allowedOrigins("*")  // Permite todos los orígenes
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
-			}
 		};
 	}
 }
