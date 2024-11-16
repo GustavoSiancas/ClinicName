@@ -23,6 +23,7 @@ public class DemoApplication {
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
+			}
 		};
 	}
 }
