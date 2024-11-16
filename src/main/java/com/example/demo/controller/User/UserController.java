@@ -2,7 +2,6 @@ package com.example.demo.controller.User;
 
 import com.example.demo.controller.User.Request.LoginRequest;
 import com.example.demo.controller.User.Response.LoginResponse;
-import com.example.demo.entity.UserEntity;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
