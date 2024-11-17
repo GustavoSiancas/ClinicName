@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.controller.Doctor.request.DoctorRequest;
+import com.example.demo.controller.Doctor.response.DoctorCompleteResponse;
 import com.example.demo.controller.Doctor.response.SimpleResponse;
 import com.example.demo.entity.ClinicEntity;
 import com.example.demo.entity.DoctorEntity;
@@ -49,5 +50,20 @@ public class DoctorService {
         return listaSimpleDoctors;
     }
 
+    public List<DoctorCompleteResponse> getAllDoctorsComplete(Long clinicId){
+        List<DoctorEntity> lista= doctorRepository.findByClinic_Id(clinicId);
+        List<DoctorCompleteResponse> listaCompleteDoctors = new ArrayList<>();
+        for (DoctorEntity doctor : lista) {
+            listaCompleteDoctors.add(new DoctorCompleteResponse(
+                    doctor.getFullName(),
+                    doctor.getDNI(),
+                    doctor.getEmail(),
+                    doctor.getPhone(),
+                    doctor.getPhoto(),
+                    doctor.getPercentage()
+            ));
+        }
+        return listaCompleteDoctors;
+    }
 
 }

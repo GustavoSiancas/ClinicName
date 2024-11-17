@@ -1,6 +1,7 @@
 package com.example.demo.controller.Doctor;
 
 import com.example.demo.controller.Doctor.request.DoctorRequest;
+import com.example.demo.controller.Doctor.response.DoctorCompleteResponse;
 import com.example.demo.controller.Doctor.response.SimpleResponse;
 import com.example.demo.entity.DoctorEntity;
 import com.example.demo.repository.DoctorRepository;
@@ -23,9 +24,14 @@ public class DoctorController {
         return ResponseEntity.ok(doctorService.save(doctor));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/simple/{id}")
     public ResponseEntity<List<SimpleResponse>> getAllDoctors(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getallSimpleDoctors(id));
+    }
+
+    @GetMapping("/complete/{id}")
+    public ResponseEntity<List<DoctorCompleteResponse>> getAllCompleteDoctors(@PathVariable Long id) {
+        return ResponseEntity.ok(doctorService.getAllDoctorsComplete(id));
     }
 
     @PutMapping("{id}")
