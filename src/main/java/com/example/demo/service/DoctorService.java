@@ -55,6 +55,7 @@ public class DoctorService {
         List<DoctorCompleteResponse> listaCompleteDoctors = new ArrayList<>();
         for (DoctorEntity doctor : lista) {
             listaCompleteDoctors.add(new DoctorCompleteResponse(
+                    doctor.getId(),
                     doctor.getFullName(),
                     doctor.getDNI(),
                     doctor.getEmail(),
