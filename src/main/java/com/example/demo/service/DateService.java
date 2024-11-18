@@ -112,12 +112,11 @@ public class DateService {
                 int minutes = (int) duration.toMinutes();
                 int intervalCount=minutes/30;
                 String PatientName = "Pac: "+dateEntity.getPatient().getFullName();
-                String DoctorName = "Dr. "+dateEntity.getDoctor().getFullName();
                 String module="Sala: "+dateEntity.getRoom().toString();
                 StatusEntity status=dateEntity.getStatus();
                 for (int i = 0; i < intervalCount; i++) {
                     String nameHour=timeStart.toString();
-                    responses.add(new DatePackResponse(nameDay,nameHour,PatientName,DoctorName,module,status));
+                    responses.add(new DatePackResponse(nameDay,nameHour,PatientName,dateEntity.getDescription(),module,status));
                     timeStart=timeStart.plusMinutes(30);
                 }
 
