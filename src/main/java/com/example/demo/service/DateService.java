@@ -1,11 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.Date.request.CompleteDateRequest;
-import com.example.demo.controller.Date.request.DateSimpleRequest;
-import com.example.demo.controller.Date.request.DayDateRequest;
-import com.example.demo.controller.Date.request.FilterDateRequest;
-import com.example.demo.controller.Date.response.DatePackResponse;
-import com.example.demo.controller.Date.response.DateResponse;
+import com.example.demo.controller.Date.request.*;
+import com.example.demo.controller.Date.response.*;
 import com.example.demo.entity.DateEntity;
 import com.example.demo.entity.StatusEntity;
 import com.example.demo.repository.DateRepository;
@@ -35,6 +31,7 @@ public class DateService {
     private DoctorRepository doctorRepository;
     @Autowired
     private HeadquarterRepository headquarterRepository;
+    private BigDecimal payment=BigDecimal.ZERO;
 
     public DateResponse getDatebyId(Long id) {
         DateEntity date=dateRepository.findById(id).orElse(null);
@@ -172,6 +169,97 @@ public class DateService {
         }
         return money;
     }
+    public List<DateViewResponse> getallVDates(FilterAllRequest filter) {
+        List<DateViewResponse> responses = new ArrayList<>();
+        List<DateEntity> dateEntities=dateRepository.findByHeadquarterAndOptionalDoctorAndDateRange(
+                filter.idHeadquarter(),
+                filter.idDoctor(),
+                filter.date().atStartOfDay(),
+                filter.date().plusMonths(1).atTime(23, 59, 59)
+        );
+
+        dateEntities.sort((date1, date2) -> {
+            // Comparar por fecha y hora
+            if (date1.getDateTimeStart().isBefore(date2.getDateTimeStart())) {
+                return -1; // date1 es antes que date2
+            } else if (date1.getDateTimeStart().isAfter(date2.getDateTimeStart())) {
+                return 1;  // date1 es después que date2
+            }
+            return 0;  // Son iguales
+        });
+        return mapToList(dateEntities);
+    }
+
+    public List<PaymentDateDoctor> getPaymentDates(FilterPaymentDate filter){
+        List<DateEntity> dateEntities=dateRepository.findByHeadquarterAndOptionalDoctorAndDateRange(
+                filter.idHeadquarter(),
+                filter.idDoctor(),
+                filter.dateStart().atStartOfDay(),
+                filter.dateEnd().atTime(23, 59, 59)
+        );
+        List<PaymentDateDoctor> responses=new ArrayList<>();
+        dateEntities.sort((date1, date2) -> {
+            // Comparar por fecha y hora
+            if (date1.getDateTimeStart().isBefore(date2.getDateTimeStart())) {
+                return -1; // date1 es antes que date2
+            } else if (date1.getDateTimeStart().isAfter(date2.getDateTimeStart())) {
+                return 1;  // date1 es después que date2
+            }
+            return 0;  // Son iguales
+        });
+        this.payment=BigDecimal.ZERO;
+        for (DateEntity dateEntity : dateEntities) {
+            String porcentaje= dateEntity.getPercentage()*100+"%";
+            responses.add(new PaymentDateDoctor(
+                    dateEntity.getDateTimeStart().toLocalDate(),
+                    dateEntity.getDescription(),
+                    dateEntity.getPatient().getFullName(),
+                    dateEntity.getMoney(),
+                    porcentaje,
+                    dateEntity.getMoney_price()
+            ));
+            this.payment=this.payment.add(dateEntity.getMoney_price());
+        }
+        return responses;
+    }
+
+
+    public List<DateViewResponse> mapToList(List<DateEntity> dateEntities){
+        List<DateViewResponse> responses = new ArrayList<>();
+        for (DateEntity dateEntity : dateEntities) {
+            String fecha=dateEntity.getDateTimeStart().toLocalDate().toString();
+            String horaInicio=dateEntity.getDateTimeStart().toLocalTime().toString();
+            String horaFin=dateEntity.getDateTimeEnd().toLocalTime().toString();
+            responses.add(new DateViewResponse(
+                    dateEntity.getId(),
+                    fecha,
+                    horaInicio,
+                    horaFin,
+                    dateEntity.getDescription(),
+                    dateEntity.getStatus().toString(),
+                    dateEntity.getPatient().getFullName(),
+                    dateEntity.getDoctor().getFullName(),
+                    dateEntity.getMoney(),
+                    dateEntity.getPercentage()
+            ));
+        }
+        return responses;
+    }
+
+    public DateEntity updateSimpleDateRequest(UpdateSimpleDateRequest request) {
+        DateEntity dateEntity=dateRepository.findById(request.id()).orElse(null);
+        dateEntity.setStatus(request.status());
+        dateEntity.setMoney(request.money());
+        dateEntity.setPercentage(request.percentage());
+        dateEntity.setTarifa();
+        return dateRepository.save(dateEntity);
+    }
+
+    public DateEntity updateStatus(Long id, StatusEntity status) {
+        DateEntity dateEntity = dateRepository.findById(id).orElse(null);
+        dateEntity.setStatus(status);
+        return dateRepository.save(dateEntity);
+    }
 
     public boolean deleteDateById(Long id) {
         if (dateRepository.existsById(id)) {
@@ -179,6 +267,10 @@ public class DateService {
             return true;
         }
         return false;
+    }
+
+    public Payment getPayment(){
+        return new Payment(payment);
     }
 
 }

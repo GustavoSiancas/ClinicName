@@ -1,12 +1,9 @@
 package com.example.demo.controller.Date;
 
-import com.example.demo.controller.Date.request.CompleteDateRequest;
-import com.example.demo.controller.Date.request.DateSimpleRequest;
-import com.example.demo.controller.Date.request.DayDateRequest;
-import com.example.demo.controller.Date.request.FilterDateRequest;
-import com.example.demo.controller.Date.response.DatePackResponse;
-import com.example.demo.controller.Date.response.DateResponse;
+import com.example.demo.controller.Date.request.*;
+import com.example.demo.controller.Date.response.*;
 import com.example.demo.entity.DateEntity;
+import com.example.demo.entity.StatusEntity;
 import com.example.demo.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,27 +24,42 @@ public class DateController {
         return ResponseEntity.ok(dateService.saveSimple(request));
     }
 
+    @PostMapping("/view")
+    public ResponseEntity<List<DateViewResponse>> view(@RequestBody FilterAllRequest filter) {
+        return ResponseEntity.ok(dateService.getallVDates(filter));
+    }
+
     @PostMapping("/pack")
     public ResponseEntity<List<DatePackResponse>> getdates(@RequestBody FilterDateRequest filter) {
         return ResponseEntity.ok(dateService.getScheduleWithFilter(filter));
     }
 
-    @PostMapping("/doctor")
-    public ResponseEntity<List<DateResponse>> getDoctorbyId(@RequestBody DayDateRequest dayDateRequest) {
-        return ResponseEntity.ok(dateService.getDayDoctor(dayDateRequest));
+    @PostMapping("/doctor/range")
+    public ResponseEntity<List<PaymentDateDoctor>> getDoctorbyId(@RequestBody FilterPaymentDate filter) {
+        return ResponseEntity.ok(dateService.getPaymentDates(filter));
     }
 
-    @PostMapping("/doctor/money")
-    public ResponseEntity<BigDecimal> getDoctorbyMoney(@RequestBody DayDateRequest dayDateRequest) {
-        return ResponseEntity.ok(dateService.allMoneyByDoctorDay(dayDateRequest));
+    @GetMapping("/doctor/money")
+    public ResponseEntity<Payment> getDoctorbyMoney() {
+        return ResponseEntity.ok(dateService.getPayment());
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<DateResponse> getDatebyId(@PathVariable Long id) {
         return ResponseEntity.ok(dateService.getDatebyId(id));
     }
 
+    @PutMapping("/status/{id}/{status}")
+    public ResponseEntity<DateEntity> updateStatus(@PathVariable Long id, @PathVariable StatusEntity status) {
+        return ResponseEntity.ok(dateService.updateStatus(id, status));
+    }
 
+    @PutMapping("/simple")
+    public ResponseEntity<DateEntity> updateSimple(@RequestBody UpdateSimpleDateRequest request) {
+        return ResponseEntity.ok(dateService.updateSimpleDateRequest(request));
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<DateEntity> updateDate(@PathVariable Long id, @RequestBody CompleteDateRequest completeDateRequest){

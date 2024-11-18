@@ -52,7 +52,12 @@ public class DateEntity {
     @PrePersist
     protected void onCreate() {
         this.money=new BigDecimal("0");
+        this.percentage= doctor.getPercentage();
         this.money_price=new BigDecimal("0");
         this.status=StatusEntity.CITADO;
+    }
+
+    public void setTarifa() {
+        this.money_price= this.money.multiply(new BigDecimal(this.percentage));
     }
 }
