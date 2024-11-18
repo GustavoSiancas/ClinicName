@@ -17,9 +17,13 @@ import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 @Service
 public class DateService {
@@ -100,20 +104,23 @@ public class DateService {
         List<DatePackResponse> responses = new ArrayList<>();
         for (DateEntity dateEntity : dates) {
             if (dateEntity.getDateTimeStart().isAfter(request.dateStart()) && dateEntity.getDateTimeEnd().isBefore(request.dateEnd()) && dateEntity.getHeadquarter().getId().equals(request.HeadquarterId())) {
-                String dateString = dateEntity.getDateTimeStart().getDayOfWeek().toString()
-                        + " "
-                        + dateEntity.getDateTimeStart().getDayOfMonth();
+                Duration duration =Duration.between(dateEntity.getDateTimeStart(), dateEntity.getDateTimeEnd());
+                LocalTime timeStart=dateEntity.getDateTimeStart().toLocalTime();
+                String nameDay=dateEntity.getDateTimeStart().getDayOfWeek()
+                        .getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
+                nameDay = nameDay.substring(0, 1).toUpperCase() + nameDay.substring(1).toLowerCase();
+                int minutes = (int) duration.toMinutes();
+                int intervalCount=minutes/30;
+                String PatientName = "Pac: "+dateEntity.getPatient().getFullName();
+                String DoctorName = "Dr. "+dateEntity.getDoctor().getFullName();
+                String module="Sala: "+dateEntity.getRoom().toString();
+                StatusEntity status=dateEntity.getStatus();
+                for (int i = 0; i < intervalCount; i++) {
+                    String nameHour=timeStart.toString();
+                    responses.add(new DatePackResponse(nameDay,nameHour,PatientName,DoctorName,module,status));
+                    timeStart=timeStart.plusMinutes(30);
+                }
 
-                DatePackResponse response=new DatePackResponse(
-                        dateEntity.getId(),
-                        dateEntity.getPatient().getFullName(),
-                        dateEntity.getDateTimeStart().toLocalTime(),
-                        dateEntity.getDateTimeEnd().toLocalTime(),
-                        dateString,
-                        dateEntity.getRoom(),
-                        dateEntity.getStatus()
-                );
-                responses.add(response);
             }
         }
         return responses;

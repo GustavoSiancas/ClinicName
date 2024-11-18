@@ -7,12 +7,11 @@ import com.example.demo.entity.StatusEntity;
 import java.time.LocalTime;
 
 public record DatePackResponse (
-        Long Id,
-        String name,
-        LocalTime startDate,
-        LocalTime endDate,
-        String nameDate,
-        RoomEntity module,
+        String nameDay,
+        String nameHour,
+        String PatientName,
+        String DescripcionDate,
+        String module,
         StatusEntity status
 ){
 }
