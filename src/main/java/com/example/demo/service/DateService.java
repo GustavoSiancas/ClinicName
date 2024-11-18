@@ -101,6 +101,17 @@ public class DateService {
 
     public List<DatePackResponse> getScheduleWithFilter(FilterDateRequest request) {
         List<DateEntity> dates = dateRepository.findByDoctor_Id(request.DoctorId());
+
+        dates.sort((date1, date2) -> {
+            // Comparar por fecha y hora
+            if (date1.getDateTimeStart().isBefore(date2.getDateTimeStart())) {
+                return -1; // date1 es antes que date2
+            } else if (date1.getDateTimeStart().isAfter(date2.getDateTimeStart())) {
+                return 1;  // date1 es después que date2
+            }
+            return 0;  // Son iguales
+        });
+
         List<DatePackResponse> responses = new ArrayList<>();
         for (DateEntity dateEntity : dates) {
             if (dateEntity.getDateTimeStart().isAfter(request.dateStart()) && dateEntity.getDateTimeEnd().isBefore(request.dateEnd()) && dateEntity.getHeadquarter().getId().equals(request.HeadquarterId())) {
@@ -122,6 +133,8 @@ public class DateService {
 
             }
         }
+
+
         return responses;
     }
 
