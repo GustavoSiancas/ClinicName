@@ -209,15 +209,17 @@ public class DateService {
         });
         this.payment=BigDecimal.ZERO;
         for (DateEntity dateEntity : dateEntities) {
-            String porcentaje= dateEntity.getPercentage()*100+"%";
-            responses.add(new PaymentDateDoctor(
-                    dateEntity.getDateTimeStart().toLocalDate(),
-                    dateEntity.getDescription(),
-                    dateEntity.getPatient().getFullName(),
-                    dateEntity.getMoney(),
-                    porcentaje,
-                    dateEntity.getMoney_price()
-            ));
+            if (dateEntity.getStatus().equals(StatusEntity.ATENDIDO)) {
+                String porcentaje = String.format("%.1f%%", dateEntity.getPercentage() * 100);
+                responses.add(new PaymentDateDoctor(
+                        dateEntity.getDateTimeStart().toLocalDate(),
+                        dateEntity.getDescription(),
+                        dateEntity.getPatient().getFullName(),
+                        dateEntity.getMoney(),
+                        porcentaje,
+                        dateEntity.getMoney_price()
+                ));
+            }
             this.payment=this.payment.add(dateEntity.getMoney_price());
         }
         return responses;
